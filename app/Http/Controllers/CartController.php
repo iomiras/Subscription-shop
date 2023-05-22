@@ -46,15 +46,38 @@ class CartController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function findById($id)
     {
-        //
+        $cart = Cart::find($id);
+
+        if (!$cart)
+            return response()->json(['message' => 'Cart not found'], 404);
+
+        $cartItems = CartItem::where('cart_id', $cart->id)->get();
+
+        if ($cartItems === null) {
+            $productItems = [];
+        } else {
+            $productItems = $cartItems->map(function ($cartItem) {
+                return [
+                    'product_id' => $cartItem->product->id,
+                    'name' => $cartItem->product->name,
+                    'desc' => $cartItem->product->desc,
+                    'category' => $cartItem->product->category,
+                    'unit_weight' => $cartItem->product->unit_weight,
+                    'price' => $cartItem->product->price,
+                    'quantity' => $cartItem->quantity,
+                ];
+            });
+        }
+
+        return response()->json([
+            'cart' => $cart,
+            'cartItems' => $productItems,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function addProduct(Request $request)
     {
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -114,38 +137,5 @@ class CartController extends Controller
             $cartItem->delete();
 
         return response()->json(['message' => 'Product removed from cart'], 200);
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cart $carts)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cart $carts)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cart $carts)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cart $carts)
-    {
-        //
     }
 }

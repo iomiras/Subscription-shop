@@ -60,8 +60,13 @@ class SubscriptionController extends Controller
 
     public function show($id)
     {
-        // Retrieve a specific subscription
+        $subscription = Subscription::find($id);
+        if ($subscription)
+            return response()->json($subscription, 200);
+        else
+            return response()->json(['message' => 'Subscription not found'], 404);
     }
+
 
     public function update(Request $request, $id)
     {

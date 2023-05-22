@@ -38,6 +38,40 @@ class OrderController extends Controller
             'orderItems' => $productItems,
         ]);
     }
+
+    public function findById($id)
+    {
+        $order = Order::find($id);
+
+        if (!$order) {
+            return response()->json(['message' => 'Cart not found'], 404);
+        }
+
+        $orderItems = OrderItem::where('order_id', $order->id)->get();
+
+        if ($orderItems === null)
+            $productItems = [];
+        else {
+            $productItems = $orderItems->map(function ($orderItem) {
+                return [
+                    'product_id' => $orderItem->product->id,
+                    'name' => $orderItem->product->name,
+                    'desc' => $orderItem->product->desc,
+                    'category' => $orderItem->product->category,
+                    'unit_weight' => $orderItem->product->unit_weight,
+                    'price' => $orderItem->product->price,
+                    'quantity' => $orderItem->quantity,
+                ];
+            });
+        }
+
+        return response()->json([
+            'order' => $order,
+            'orderItems' => $productItems,
+        ]);
+    }
+
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([

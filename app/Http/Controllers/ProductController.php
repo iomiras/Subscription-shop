@@ -11,57 +11,67 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($category)
+    public function index()
     {
-        return $category ? Product::where('category', $category)->get() : Product::all();
-        // return response()->json($products);
+        return Product::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function findByCategory(string $category)
     {
-        //
+        return Product::where('category', $category)->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function findById(int $id)
     {
-        //
+        return Product::where('id', $id)->first();
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function create(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'desc' => 'required|string',
+            'price' => 'required|integer',
+            'category' => 'required|string',
+            'unit_weight' => 'required|numeric',
+            'in_stock_quantity' => 'required|integer',
+        ]);
+
+        $product = new Product();
+        $product->name = $validatedData['name'];
+        $product->desc = $validatedData['desc'];
+        $product->price = $validatedData['price'];
+        $product->category = $validatedData['category'];
+        $product->unit_weight = $validatedData['unit_weight'];
+        $product->in_stock_quantity = $validatedData['in_stock_quantity'];
+        $product->save();
+
+        return response()->json(['message' => 'Product created successfully'], 201);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        $product->update($request->all());
+
+        return response()->json(['message' => 'Product updated successfully']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        $product->delete();
+
+        return response()->json(['message' => 'Product deleted successfully']);
     }
 }
