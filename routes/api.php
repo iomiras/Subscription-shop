@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +35,5 @@ Route::delete('/cart/remove', [CartController::class, 'removeProduct']);
 Route::post('/checkout', [OrderController::class, 'store']);
 Route::put('/orders/{id}/payment_status/{status}', [OrderController::class, 'updatePaymentStatus']);
 Route::get('/orders/{user_id}', [OrderController::class, 'index']);
+
+Route::post('/subscriptions', [SubscriptionController::class, 'create']);

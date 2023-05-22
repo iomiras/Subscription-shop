@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Cart;
-use App\Models\User;
-use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Validator;
 
@@ -51,9 +49,9 @@ class OrderController extends Controller
 
         $total = 0;
         foreach ($cartItems as $cartItem) {
-            ($itemPrice = $cartItem->product->category === 'dairy')
-                ? ($cartItem->product->price * $cartItem->quantity)
-                : ($cartItem->product->unit_weight * $cartItem->product->price * $cartItem->quantity);
+            $itemPrice = $cartItem->product->category === 'dairy'
+                ? $cartItem->product->price * $cartItem->quantity
+                : $cartItem->product->unit_weight * $cartItem->product->price * $cartItem->quantity;
 
             $total += $itemPrice;
         }
