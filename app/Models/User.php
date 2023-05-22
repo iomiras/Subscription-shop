@@ -14,4 +14,9 @@ class User extends Model
         'address',
         'telephone'
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
