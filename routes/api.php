@@ -33,6 +33,7 @@ Route::get('/orders/{id}', [OrderController::class, 'findById']);
 
 Route::post('/subscriptions', [SubscriptionController::class, 'create']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
+Route::post('/subscriptions/{id}/prolong', [SubscriptionController::class, 'prolongSubscription']);
 
 Route::put('/deliveries/{id}/{status}', [DeliveryController::class, 'update']);
 Route::get('/deliveries/orders/{order_id}', [DeliveryController::class, 'findByOrderId']);

@@ -6,10 +6,8 @@ use Carbon\Carbon;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use App\Models\Cart;
 use App\Models\Delivery;
 use App\Models\Subscription;
-use Illuminate\Support\Facades\Validator;
 
 class SubscriptionController extends Controller
 {
@@ -83,5 +81,15 @@ class SubscriptionController extends Controller
             return response()->json($subscription, 200);
         else
             return response()->json(['message' => 'Subscription not found'], 404);
+    }
+
+    public function prolongSubscription($id)
+    {
+        $subscription = Subscription::findOrFail($id);
+        $subscriptionEndDate = Carbon::parse($subscription->current_period_end);
+        $newEndDate = $subscriptionEndDate->addMonth();
+        $subscription->current_period_end = $newEndDate;
+        $subscription->save();
+        return response()->json(['message' => 'Subscription prolonged successfully', 'new_end_date' => $newEndDate], 200);
     }
 }
