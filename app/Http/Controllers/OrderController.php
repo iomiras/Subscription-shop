@@ -21,7 +21,9 @@ class OrderController extends Controller
         }
         $orderItems = OrderItem::whereIn('order_id', $orderIds)->get();
 
-        $productItems = $orderItems->map(function ($orderItem) {
+        $productItems = $orderItems->load('product')->map(function ($orderItem) {
+            $inStockQuantity = $orderItem->product->in_stock_quantity;
+
             return [
                 'product_id' => $orderItem->product->id,
                 'name' => $orderItem->product->name,
@@ -29,7 +31,7 @@ class OrderController extends Controller
                 'category' => $orderItem->product->category,
                 'unit_weight' => $orderItem->product->unit_weight,
                 'price' => $orderItem->product->price,
-                'quantity' => $orderItem->quantity,
+                'quantity' => $orderItem->quantity >= $inStockQuantity ? $orderItem->quantity : 'Sorry, this product is not in stock',
             ];
         });
 
@@ -52,17 +54,20 @@ class OrderController extends Controller
         if ($orderItems === null)
             $productItems = [];
         else {
-            $productItems = $orderItems->map(function ($orderItem) {
-                return [
-                    'product_id' => $orderItem->product->id,
-                    'name' => $orderItem->product->name,
-                    'desc' => $orderItem->product->desc,
-                    'category' => $orderItem->product->category,
-                    'unit_weight' => $orderItem->product->unit_weight,
-                    'price' => $orderItem->product->price,
-                    'quantity' => $orderItem->quantity,
-                ];
-            });
+            $productItems = $orderItems->load('product')->map(
+                function ($orderItem) {
+                    $inStockQuantity = $orderItem->product->in_stock_quantity;
+                    return [
+                        'product_id' => $orderItem->product->id,
+                        'name' => $orderItem->product->name,
+                        'desc' => $orderItem->product->desc,
+                        'category' => $orderItem->product->category,
+                        'unit_weight' => $orderItem->product->unit_weight,
+                        'price' => $orderItem->product->price,
+                        'quantity' => $orderItem->quantity >= $inStockQuantity ? $orderItem->quantity : 'Sorry, this product is not in stock',
+                    ];
+                }
+            );
         }
 
         return response()->json([

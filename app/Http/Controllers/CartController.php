@@ -3,18 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\User;
 use App\Models\Product;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\DB;
-
 class CartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index($user_id)
     {
         $carts = Cart::where('user_id', $user_id)->get();
@@ -25,7 +19,9 @@ class CartController extends Controller
         }
         $cartItems = CartItem::whereIn('cart_id', $cartIds)->get();
 
-        $productItems = $cartItems->map(function ($cartItem) {
+        $productItems = $cartItems->load('product')->map(function ($cartItem) {
+            $inStockQuantity = $cartItem->product->in_stock_quantity;
+
             return [
                 'product_id' => $cartItem->product->id,
                 'name' => $cartItem->product->name,
@@ -33,7 +29,7 @@ class CartController extends Controller
                 'category' => $cartItem->product->category,
                 'unit_weight' => $cartItem->product->unit_weight,
                 'price' => $cartItem->product->price,
-                'quantity' => $cartItem->quantity,
+                'quantity' => $cartItem->quantity >= $inStockQuantity ? $cartItem->quantity : 'Sorry, this product is not in stock',
             ];
         });
 
@@ -43,9 +39,6 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function findById($id)
     {
         $cart = Cart::find($id);
@@ -58,7 +51,9 @@ class CartController extends Controller
         if ($cartItems === null) {
             $productItems = [];
         } else {
-            $productItems = $cartItems->map(function ($cartItem) {
+            $productItems = $cartItems->load('product')->map(function ($cartItem) {
+                $inStockQuantity = $cartItem->product->in_stock_quantity;
+
                 return [
                     'product_id' => $cartItem->product->id,
                     'name' => $cartItem->product->name,
@@ -66,7 +61,7 @@ class CartController extends Controller
                     'category' => $cartItem->product->category,
                     'unit_weight' => $cartItem->product->unit_weight,
                     'price' => $cartItem->product->price,
-                    'quantity' => $cartItem->quantity,
+                    'quantity' => $cartItem->quantity >= $inStockQuantity ? $cartItem->quantity : 'Sorry, this product is not in stock',
                 ];
             });
         }

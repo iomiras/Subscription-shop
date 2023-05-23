@@ -11,7 +11,7 @@ class CreateSubscriptionsTable extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('order_id');
+            $table->unsignedInteger('order_id')->unique();
             $table->enum('status', ['active', 'inactive']);
             $table->timestamp('current_period_start')->nullable();
             $table->timestamp('current_period_end')->nullable();
