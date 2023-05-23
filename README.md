@@ -1,66 +1,32 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://drawsql.app/teams/poklas/diagrams/arbuz" target="_blank"><img src="https://www.imagehost.at/images/2023/05/23/drawSQL-arbuz-export-2023-05-23.png" width="80%" alt="MySQL DB structure"></a></p>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<a href="https://drawsql.app/teams/poklas/diagrams/arbuz">Если картины не видно, то можете найти структуру БД тут</a>
 </p>
 
-## About Laravel
+### Postman Link: https://www.postman.com/poklas/workspace/arbuz/collection/21766612-80f3e40b-6c7b-43a8-9b1d-c8121d78fe85?action=share&creator=21766612
+## Какие механизмы сделаны, кроме минимальных требований?
+- Введена функция отслеживания доставки, которая позволяет пользователям узнать статус своей посылки и ожидаемое время доставки.
+- Разработана система планирования доставок, которая учитывает выбранный день недели и предпочтения пользователя по времени доставки.
+- Создана таблица для отслеживания всех доставок, где даты доставок определяются на основе дня недели. Для реализации этой функциональности была использована библиотека Carbon.
+- В таблице доставок создается новая запись только после того, как заказ предыдущей недели был доставлен. Это обеспечивает систематический и организованный процесс доставки и записи данных.
+- Созданы разные фильтры для почти всех таблиц, на основе ID, категорий и статуса. 
+- Добавлена возможность продления подписки еще на месяц, что обеспечит бесперебойную работу пользователей.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Поток данных между таблицами
+#### Пользователь добавляет товар в корзину:
+- Информация о товаре и его количестве сохраняется в виде элемента "cart item" в таблице "carts"
+- Количество товара в наличии уменьшается в таблице "products"
+#### Пользователь переходит к оформлению заказа:
+- Элементы из корзины пользователя передаются в таблицу "orders" и "order items"
+- Заказы содержат информацию о товарах, их количестве и цене
+#### Пользователь создает подписку:
+- Детали подписки, такие как предпочитаемый день недели и временной слот, сохраняются в таблице "subscriptions"
+- Создается первая запись о доставке в таблице "deliveries" на основе предпочитаемого дня недели
+- Запись о доставке включает идентификатор подписки, запланированную дату доставки, временной слот и начальный статус доставки
+- Дата доставки рассчитывается на основе предпочитаемого дня недели и сохраняется в таблице.
+- При изменений статуса на "delivered" создается запись о следующей доставке, которая должна будет произойти через неделю с момента предыдущей доставки
+#### Статус доставки изменяется на "доставлено":
+- Создается новая запись о доставке на следующую неделю в таблице "доставки"
+- Создается новая запись о следующей доставке, которая запланирована на неделю после предыдущей доставки
+- Это позволяет поддерживать регулярность доставок и постепенность записи данных
