@@ -25,14 +25,12 @@ class DeliveryController extends Controller
     public function update(int $id, $status)
     {
         $delivery = Delivery::find($id);
-        $previousStatus = $delivery->status;
         $delivery->status = $status;
+        $currentDate = Carbon::now()->timezone('Asia/Almaty');
+        $delivery->delivery_timestamp = $status === 'delivered' ? $currentDate : NULL;
         $delivery->save();
 
         if ($status === 'delivered') {
-            $currentDate = Carbon::now()->timezone('Asia/Almaty');
-            $delivery->delivery_timestamp = $currentDate;
-
             $subscription = Subscription::where('order_id', $delivery->order_id)->first();
             $subscriptionEndDate = Carbon::parse($subscription->current_period_end);
             $nextDeliveryDate = $currentDate->addWeek();
@@ -52,5 +50,11 @@ class DeliveryController extends Controller
         }
 
         return response()->json(['message' => 'Delivery status updated successfully'], 200);
+    }
+
+    public function filterByStatus($status)
+    {
+        $deliveries = Delivery::where('status', $status)->get();
+        return response()->json($deliveries, 200);
     }
 }
