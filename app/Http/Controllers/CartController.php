@@ -80,11 +80,12 @@ class CartController extends Controller
         ]);
 
         $product = Product::find($validatedData['product_id']);
-        $product->decrement('in_stock_quantity');
 
         if (!$product->in_stock_quantity) {
             return response()->json(['message' => 'Product is out of stock'], 400);
         }
+
+        $product->decrement('in_stock_quantity');
 
         $cart = Cart::firstOrCreate(['user_id' => $validatedData['user_id']]);
 

@@ -35,5 +35,5 @@ Route::post('/subscriptions', [SubscriptionController::class, 'create']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
 Route::put('/deliveries/{id}/{status}', [DeliveryController::class, 'update']);
-Route::get('/deliveries/ordes/{order_id}', [DeliveryController::class, 'findByOrderId']);
+Route::get('/deliveries/orders/{order_id}', [DeliveryController::class, 'findByOrderId']);
 Route::get('/deliveries', [DeliveryController::class, 'index']);

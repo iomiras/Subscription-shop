@@ -29,7 +29,7 @@ class DeliveryController extends Controller
         $delivery->status = $status;
         $delivery->save();
 
-        if ($previousStatus !== 'delivered' && $status === 'delivered') {
+        if ($status === 'delivered') {
             $currentDate = Carbon::now()->timezone('Asia/Almaty');
             $delivery->delivery_timestamp = $currentDate;
 
@@ -44,7 +44,7 @@ class DeliveryController extends Controller
             $newDelivery = new Delivery();
             $newDelivery->order_id = $delivery->order_id;
             $newDelivery->planned_delivery_date = $nextDeliveryDate->format('Y-m-d');
-            $newDelivery->planned_time_slot = $delivery->time_slot;
+            $newDelivery->planned_time_slot = $delivery->planned_time_slot;
             $newDelivery->status = 'pending';
 
             $newDelivery->save();
